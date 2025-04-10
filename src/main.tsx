@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-
+import { CartContextProvider } from './contexts/CartProvider'
 import { Cart } from './pages/Cart'
 import { Home } from './pages/Home'
 import { Success } from './pages/Success'
@@ -30,6 +30,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <CartContextProvider>
+      <RouterProvider router={router} />
+    </CartContextProvider>
+
   </React.StrictMode>,
 )
