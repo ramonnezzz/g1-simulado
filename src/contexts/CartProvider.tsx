@@ -9,7 +9,6 @@ import {
 } from '../reducers/cart/actions'
 import { cartReducer, Item, Order } from '../reducers/cart/reducer'
 import { OrderInfo } from '../pages/Cart'
-import { useNavigate } from 'react-router-dom'
 
 interface CartContextType {
   cart: Item[]
@@ -18,7 +17,7 @@ interface CartContextType {
   removeItem: (itemId: Item['id']) => void
   decrementItemQuantity: (itemId: Item['id']) => void
   incrementItemQuantity: (itemId: Item['id']) => void
-  checkout: (order: OrderInfo) => void
+  checkout: (order: OrderInfo, navigate: (path: string) => void) => void
 }
 
 export const CartContext = createContext({} as CartContextType)
@@ -46,7 +45,6 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       return cartState
     },
   )
-  const navigate = useNavigate()
 
   const { cart, orders } = cartState
 
@@ -58,10 +56,6 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     dispatch(removeItemAction(itemId))
   }
 
-  function checkout(order: OrderInfo) {
-    dispatch(checkoutCartAction(order, navigate))
-  }
-
   function incrementItemQuantity(itemId: Item['id']) {
     dispatch(incrementItemQuantityAction(itemId))
   }
@@ -70,12 +64,14 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     dispatch(decrementItemQuantityAction(itemId))
   }
 
-  useEffect(() => {
-    if (cartState) {
-      const stateJSON = JSON.stringify(cartState)
 
-      localStorage.setItem('@coffee-delivery:cart-state-1.0.0', stateJSON)
-    }
+  function checkout(order: OrderInfo, navigate: (path: string) => void) {
+    dispatch(checkoutCartAction(order, navigate))
+  }
+
+  useEffect(() => {
+    const stateJSON = JSON.stringify(cartState)
+    localStorage.setItem('@coffee-delivery:cart-state-1.0.0', stateJSON)
   }, [cartState])
 
   return (
